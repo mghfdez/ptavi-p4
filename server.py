@@ -13,25 +13,25 @@ if len(sys.argv) != 2:
     raise SystemExit
 
 PORT = int(sys.argv[1])
-class EchoHandler(SocketServer.DatagramRequestHandler):
+DICC_CLIENT = {}
+class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
     """
     Echo server class
     """
-
-    def handle(self):
+    def handle(self):    
         # Escribe dirección y puerto del cliente (de tupla client_address)
-        print "Cliente: IP " + str(self.client_address[0]) ,
-        print "// Puerto " + str(self.client_address[1])
-        self.wfile.write("Hemos recibido tu peticion")
+        self.wfile.write("SIP/1.0 200 OK\r\n\r\n")
         while 1:
-            # Leyendo línea a línea lo que nos envía el cliente
             line = self.rfile.read()
-            print "El cliente nos manda " + line
-            if not line:
+            if line != "":
+                datos = line.split()
+                DICC_CLIENT[datos[3]] = self.client_address
+            else: 
                 break
+
 
 if __name__ == "__main__":
     # Creamos servidor de eco y escuchamos
-    serv = SocketServer.UDPServer(("",  PORT), EchoHandler)
+    serv = SocketServer.UDPServer(("",  PORT), SIPRegisterHandler)
     print "Lanzando servidor UDP de eco..."
     serv.serve_forever()
