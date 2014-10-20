@@ -12,7 +12,7 @@ sys.argv
 
 # Dirección IP del servidor.
 SERVER = sys.argv[1]
-PORT = sys.argv[2]
+PORT = int(sys.argv[2])
 
 # Contenido que vamos a enviar
 LINE = sys.argv[3]
