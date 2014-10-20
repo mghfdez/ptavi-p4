@@ -23,8 +23,8 @@ METODO = datos_user[3]
 if METODO == 'register':
     metod = "REGISTER"
 else:
-    metod = "unknown"
-LINE = metod
+    print "SIP/1.0 501 Not Implemented"
+    raise SystemExit
 
 # Contenido que vamos a enviar
 addr = datos_user[4]
