@@ -8,6 +8,9 @@ en UDP simple
 import SocketServer
 import sys
 
+if len(sys.argv) != 2:
+    print "Uso: $python server.py puerto"
+    raise SystemExit
 
 PORT = int(sys.argv[1])
 class EchoHandler(SocketServer.DatagramRequestHandler):
