@@ -10,6 +10,9 @@ import sys
 # Cliente UDP simple.
 
 datos_user = sys.argv
+if len(datos_user) < 3:
+    print "Uso: $python client.py ip puerto linea-de-texto"
+    raise SystemExit
 
 # Dirección IP del servidor.
 SERVER = datos_user[1]
@@ -17,7 +20,6 @@ PORT = int(datos_user[2])
 
 # Contenido que vamos a enviar
 LINE = ' '.join(datos_user[3:])
-
 
 # Creamos el socket, lo configuramos y lo atamos a un servidor/puerto
 my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
