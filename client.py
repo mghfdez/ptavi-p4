@@ -10,12 +10,14 @@ import sys
 # Cliente UDP simple.
 
 # ip | puerto | register | luke@polismassa.com
-SERVER = sys.argv[1]
-PORT = int(sys.argv[2])
-PETICIONES = sys.argv[3] 
-DIRECCION_SIP = sys.argv[4]
-EXPIRES = sys.argv[5]
-
+try:
+	SERVER = sys.argv[1]
+	PORT = int(sys.argv[2])
+	PETICIONES = sys.argv[3] 
+	DIRECCION_SIP = sys.argv[4]
+	EXPIRES = sys.argv[5]
+except IndexError:
+	print "Usage: client.py ip puerto register sip_address expires_value"
 # Lo que manda el cliente es un conjunto de dos elementos, lo creamos concatenando:
 LINE = PETICIONES.upper() + " " + "sip:" + DIRECCION_SIP + " SIP/1.0\r\n"
 LINE = LINE + "Expires: " + EXPIRES + "\r\n\r\n"
