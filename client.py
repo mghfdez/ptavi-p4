@@ -21,7 +21,7 @@ SERVER = datos_user[1]
 PORT = int(datos_user[2])
 METODO = datos_user[3]
 if METODO == 'register':
-    metod = "REGISTER"
+    metod = METODO.upper()
 else:
     print "SIP/1.0 501 Not Implemented"
     raise SystemExit
@@ -29,8 +29,8 @@ else:
 # Contenido que vamos a enviar
 addr = datos_user[4]
 
-LINE = LINE + " " + "sip:" + addr
-VER = "SIP/1.0"
+LINE = metod + " sip:" + addr
+VER = "SIP/2.0"
 # Creamos el socket, lo configuramos y lo atamos a un servidor/puerto
 my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 my_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
