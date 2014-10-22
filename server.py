@@ -7,6 +7,7 @@ en UDP simple
 
 import SocketServer
 import sys
+import time
 
 if len(sys.argv) != 2:
     print "Usage: $python server.py puerto"
@@ -19,10 +20,12 @@ FICH = open(FILE, 'w')
 FICH.write("User \t IP \t Expires\r\n")
 FICH.close()
 
-def register2file(fichero, modo, usuario, host):
+def register2file(fichero, usuario, host, expire):
     #Apunta en un txt cada vez que un usuario se registra o se da de baja
     fich = open(fichero, 'a')
-    texto = usuario + '\t' + host + '\t' + "--fecha // hora-- " + modo + "\r\n"
+    seg = expire + time.time()
+    str_time = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(seg))
+    texto = usuario + '\t' + host + '\t' + str_time + '\r\n'
     fich.write(texto)
     fich.close()
 
@@ -38,23 +41,23 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
             cadena = self.rfile.read()
             if cadena != "":
                 list_words = cadena.split()
+                print list_words
                 if list_words[0] == 'REGISTER':
                     correo = list_words[1]
-                    DICC_CLIENT[correo] = self.client_address
-                    register2file(FILE, "Añadido", correo, self.client_address[0])
+                    exp_time = int(list_words[4])
+                    dir_ip = self.client_address[0]
+                    DICC_CLIENT[correo] = dir_ip
+                    register2file(FILE, correo, dir_ip, exp_time)
                     print "Cliente añadido - " + list_words[1]
-                    if list_words[3] == 'Expires:':
-                        exp_time = int(list_words[4])
-                        print "Tiempo de expiración: " + str(exp_time)
-                        if exp_time == 0:
-                            register2file(FILE, "Borrado", correo, self.client_address[0])
-                            del DICC_CLIENT[correo]
-                            print "Borrado " + correo
+                    
+                    print "Tiempo de expiración: " + str(exp_time)
+                    if exp_time == 0:
+                        register2file(FILE, correo, dir_ip, exp_time)
+                        del DICC_CLIENT[correo]
+                        print "Borrado " + correo
                         print "\n", 
                         print DICC_CLIENT
                         self.wfile.write("SIP/2.0 200 OK\r\n\r\n")
-                    else:
-                        self.wfile.write("SIP/2.0 400 BAD REQUEST -- != expires\r\n\r\n")
                 else:
                     self.wfile.write("SIP/2.0 400 BAD REQUEST -- != register\r\n\r\n")
             else:
