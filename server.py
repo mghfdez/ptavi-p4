@@ -27,9 +27,12 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
             print "El cliente nos manda " + line
             lista = line.split()
             regis = lista[0]
+            texpires = lista[4]
             if regis == 'REGISTER':
                 user = lista[1].split(':')[-1]
                 self.diccio[str(user)] = IP
+                if int(texpires) == 0:
+                    del self.diccio[user]
             if not line or '[""]':
                 break
 
