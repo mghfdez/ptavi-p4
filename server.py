@@ -7,7 +7,7 @@ en UDP simple
 
 import SocketServer
 import sys
-
+import time
 
 class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
     """
@@ -16,6 +16,7 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
     diccio = {}
 
     def handle(self):
+        hactual = time.time()
         # Escribe dirección y puerto del cliente (de tupla client_address)
         print self.client_address
         IP = self.client_address[0]
@@ -30,15 +31,48 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
             texpires = lista[4]
             if regis == 'REGISTER':
                 user = lista[1].split(':')[-1]
-                self.diccio[str(user)] = IP
+               
                 if int(texpires) == 0:
-                    del self.diccio[user]
+                    #miro si hay usuarios en el dicc
+                    Encontrado = self.diccio.has_key(user)
+                    if Encontrado == 1: 
+                        #borro al usuario del dicc 
+                        del self.diccio[user]
+                        self.register2file()
+                else:
+                    self.diccio[str(user)] = IP + ',' + str(float(texpires) + hactual)
+                    self.register2file()
+           
             if not line or '[""]':
                 break
+        """
+        Caducidad de los usuarios registrados
+        """
+        for Usuario, Val in self.diccio.items():
+            Texp = Val.split(',')[-1]
+            if hactual >  float(Texp):
+                del self.diccio[Usuario]
+                self.register2file() 
+
+        """
+        Manipulacion de fichero
+        """
+
+    def register2file(self):
+        dic = self.diccio
+        fichero = open("registered.txt", "w")
+        fichero.write('User' + '\t' + 'IP' + '\t' + 'Expires' + '\n')
+        for Usuario, Valor in dic.items():
+            hora = Valor.split(',')[-1] #me quedo con lo que esta despues de,
+            ip = Valor.split(',')[0]
+            tactual = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(float(hora))) #me devuelve un strig de texpires+hactual
+            #voy escribiendo en el fichero la inf de los usuarios
+            fichero.write(Usuario + '\t' + ip + '\t' + tactual + '\n')
+            
+        
 
 if __name__ == "__main__":
     # Creamos servidor de eco y escuchamos
-
     serv = SocketServer.UDPServer((sys.argv[1], int(sys.argv[2])), SIPRegisterHandler)
     print "Lanzando servidor UDP de eco..."
     serv.serve_forever()
