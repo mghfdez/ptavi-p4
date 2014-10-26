@@ -35,7 +35,7 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
 
                 if int(texpires) == 0:
                     #miro si hay usuarios en el dicc
-                    encontrado = self.diccio.in(user)
+                    encontrado = 'user' in self.diccio
                     if encontrado == 1:
                         #borro al usuario del dicc
                         del self.diccio[user]
