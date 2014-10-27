@@ -44,29 +44,26 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
             cadena = self.rfile.read()
             if cadena != "":
                 list_words = cadena.split()
-                if list_words[0] == 'REGISTER':
-                    time_now = time.time()
-                    for user in DICC_CLIENT.keys():  # Limpia el diccionario
-                        if DICC_CLIENT[user][1] < time_now:
-                            del DICC_CLIENT[user]
-                            print "Cliente borrado por plazo expirado"
-                    correo = list_words[1]
-                    correo = correo.split(":")[1]
-                    exp_time = int(list_words[4])
-                    exp_sec = exp_time + time.time()
-                    dir_ip = self.client_address[0]
-                    DICC_CLIENT[correo] = [dir_ip, exp_sec]
+                time_now = time.time()
+                for user in DICC_CLIENT.keys():  # Limpia el diccionario
+                    if DICC_CLIENT[user][1] < time_now:
+                        del DICC_CLIENT[user]
+                        print "Cliente borrado por plazo expirado"
+                correo = list_words[1]
+                correo = correo.split(":")[1]
+                exp_time = int(list_words[4])
+                exp_sec = exp_time + time.time()
+                dir_ip = self.client_address[0]
+                DICC_CLIENT[correo] = [dir_ip, exp_sec]
+                register2file(FILE, DICC_CLIENT)
+                print "Cliente añadido - " + correo
+                print "Expira en: " + str(exp_time) + " seg.\r\n"
+                self.wfile.write("SIP/2.0 200 OK\r\n\r\n")
+                if exp_time == 0:
+                    del DICC_CLIENT[correo]
                     register2file(FILE, DICC_CLIENT)
-                    print "Cliente añadido - " + correo
-                    print "Expira en: " + str(exp_time) + " seg.\r\n"
+                    print "Borrado " + correo + '\n'
                     self.wfile.write("SIP/2.0 200 OK\r\n\r\n")
-                    if exp_time == 0:
-                        del DICC_CLIENT[correo]
-                        register2file(FILE, DICC_CLIENT)
-                        print "Borrado " + correo + '\n'
-                        self.wfile.write("SIP/2.0 200 OK\r\n\r\n")
-                else:
-                    self.wfile.write("SIP/2.0 400 BAD REQUEST\r\n\r\n")
             else:
                 break
 
