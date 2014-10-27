@@ -14,12 +14,13 @@ if len(datos_user) != 6:
     print "Usage: client.py ip puerto register sip_address expires_value"
     raise SystemExit
 
-EXPIRES = datos_user[5]
-
-# Dirección IP del servidor.
-SERVER = datos_user[1]
-PORT = int(datos_user[2])
+SERVER = datos_user[1]    # Dirección IP del servidor.
+PORT = int(datos_user[2])   # Puerto
 METODO = datos_user[3]
+addr = datos_user[4]   # Direccion SIP
+EXPIRES = datos_user[5]   # Tiempo de expiración
+VER = "SIP/2.0"   # Version de SIP
+
 if METODO == 'register':
     metod = METODO.upper()
 else:
@@ -27,17 +28,14 @@ else:
     raise SystemExit
 
 # Contenido que vamos a enviar
-addr = datos_user[4]
+LINE = metod + " sip:" + addr + " " + VER + "\r\n"
 
-LINE = metod + " sip:" + addr
-VER = "SIP/2.0"
 # Creamos el socket, lo configuramos y lo atamos a un servidor/puerto
 my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 my_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 my_socket.connect((SERVER, PORT))
 
 print "Enviando petición SIP..."
-LINE = LINE + " " + VER + "\r\n"
 LINE = LINE + "Expires: " + EXPIRES + "\r\n"
 my_socket.send(LINE + '\r\n')
 data = my_socket.recv(1024)
