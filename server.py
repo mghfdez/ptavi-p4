@@ -58,6 +58,7 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
                 if list_words[0] == 'REGISTER':
                     clean_dic(DICC_CLIENT)
                     correo = list_words[1]
+                    correo = correo.split(":")[1]
                     exp_time = int(list_words[4])
                     exp_sec = exp_time + time.time()
                     dir_ip = self.client_address[0]
