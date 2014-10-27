@@ -64,7 +64,7 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
                     correo = correo.split(":")[1]
                     try:
                         exp_time = int(list_words[4])
-                    except ValueError():
+                    except ValueError:
                         self.wfile.write("SIP/2.0 400 BAD REQUEST\r\n\r\n")
                         break
                     exp_sec = exp_time + time.time()
