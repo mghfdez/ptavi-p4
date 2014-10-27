@@ -16,9 +16,6 @@ if len(sys.argv) != 2:
 PORT = int(sys.argv[1])
 DICC_CLIENT = {}
 FILE = 'registered.txt'
-FICH = open(FILE, 'w')
-FICH.write("User \t IP \t Expires\r\n")
-FICH.close()
 
 
 def calc_sec(expire):
@@ -35,6 +32,7 @@ def clean_dic(dicc):
 def register2file(fichero, dicc):
     #Apunta en un txt cada vez que un usuario se registra o se da de baja
     fich = open(fichero, 'w')
+    fich.write("User \t IP \t Expires\r\n")
     for user in dicc.keys():
         host = dicc[user][0]
         seg = dicc[user][1]
@@ -47,7 +45,7 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
     """
     Echo server class
     """
-
+    
     def handle(self):    
         # Escribe dirección y puerto del cliente (de tupla client_address)        
         while 1:
