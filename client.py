@@ -22,14 +22,11 @@ LINE = PETICIONES.upper() + " " + "sip:" + DIRECCION_SIP + " SIP/2.0\r\n"
 LINE = LINE + "Expires: " + EXPIRES + "\r\n\r\n"
 # Creamos el socket, lo configuramos y lo atamos a un servidor/puerto
 my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
 my_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-# Lista que no puedes modificar.
 my_socket.connect((SERVER, PORT))
 
 print ""
 print "Enviando: " + LINE
-### \r\n por convencion, retorno de carro - nueva linea.
 my_socket.send(LINE + '\r\n')
 data = my_socket.recv(1024)
 
