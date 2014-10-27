@@ -17,12 +17,10 @@ PORT = int(sys.argv[1])
 DICC_CLIENT = {}
 FILE = 'registered.txt'
 
-
-def calc_sec(expire):
-    seg = expire + time.time()
-    return seg
-
 def clean_dic(dicc):
+    """
+    Limpia el diccionario de usuarios con plazo expirado
+    """
     time_now = time.time()
     for user in DICC_CLIENT.keys():
         if DICC_CLIENT[user][1] < time_now: 
@@ -30,7 +28,9 @@ def clean_dic(dicc):
             print "Cliente borrado por plazo expirado"
 
 def register2file(fichero, dicc):
-    #Apunta en un txt cada vez que un usuario se registra o se da de baja
+    """
+    Imprime ordenadamente un diccionario en un fichero
+    """
     fich = open(fichero, 'w')
     fich.write("User \t IP \t Expires\r\n")
     for user in dicc.keys():
@@ -56,12 +56,12 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
                     clean_dic(DICC_CLIENT)
                     correo = list_words[1]
                     exp_time = int(list_words[4])
-                    exp_sec = calc_sec(exp_time)
+                    exp_sec = exp_time + time.time()
                     dir_ip = self.client_address[0]
                     DICC_CLIENT[correo] = [dir_ip, exp_sec]              
                     register2file(FILE, DICC_CLIENT)
                     print "Cliente añadido - " + list_words[1]                    
-                    print "Tiempo de expiración: " + str(exp_time)
+                    print "Expira en: " + str(exp_time) + " seg."
                     self.wfile.write("SIP/2.0 200 OK\r\n\r\n")
                     if exp_time == 0:
                         del DICC_CLIENT[correo]
