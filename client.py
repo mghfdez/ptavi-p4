@@ -16,15 +16,15 @@ if len(datos_user) != 6:
 
 SERVER = datos_user[1]    # Dirección IP del servidor.
 PORT = int(datos_user[2])   # Puerto
-METODO = datos_user[3]
+METODO = datos_user[3]  # Metodo SIP
 addr = datos_user[4]   # Direccion SIP
 EXPIRES = datos_user[5]   # Tiempo de expiración
 VER = "SIP/2.0"   # Version de SIP
 
 if METODO == 'register':
     metod = METODO.upper()
-else:
-    print "SIP/1.0 501 Not Implemented"
+else:  # Si el metodo no es conocido o no esta implementado
+    print "SIP/2.0 501 Not Implemented"
     raise SystemExit
 
 # Contenido que vamos a enviar
