@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: iso-8859-15 -*-
+#Practica 4 - Miguel Angel Fernandez Sanchez
 """
 Clase (y programa principal) para un servidor SIP-registrar
 en UDP simple
@@ -31,12 +32,10 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
             if DICC_CLIENT[user][1] < time_now:
                 print "BORRADO cliente " + user + " (Plazo expirado)"
                 del DICC_CLIENT[user]
-                
-
 
     def register2file(self):
         """
-        Imprime con formato "User-IP-Expires" 
+        Imprime con formato "User \t IP \t Expires"
         el diccionario de clientes en un fichero.
         """
         fich = open('registered.txt', 'w')
@@ -49,13 +48,11 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
             fich.write(texto)
         fich.close()
 
-
     def handle(self):
         """
-        Maneja peticiones SIP del cliente y las procesa: si el metodo es 
-        conocido (REGISTER) guarda los datos en un diccionario y en un fichero;
-        y responde un mensaje de confirmación al cliente. Si no, envia
-        un mensaje de error.
+        Maneja peticiones SIP del cliente: si la petición es correcta,
+        guarda los datos (en un diccionario y en un fichero) y responde un
+        mensaje de confirmación al cliente. Si no, envía un mensaje de error.
         """
         while 1:
             cadena = self.rfile.read()
@@ -67,22 +64,21 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
                     correo = correo.split(":")[1]
                     try:
                         exp_time = int(list_words[4])
-                    except ValueError:
+                    except ValueError():
                         self.wfile.write("SIP/2.0 400 BAD REQUEST\r\n\r\n")
                         break
                     exp_sec = exp_time + time.time()
                     dir_ip = self.client_address[0]
                     DICC_CLIENT[correo] = [dir_ip, exp_sec]
                     self.register2file()
-                    print "Cliente añadido - " + correo
+                    print "AÑADIDO cliente " + correo
                     print "Expira en: " + str(exp_time) + " seg.\r\n"
                     self.wfile.write("SIP/2.0 200 OK\r\n\r\n")
                     if exp_time == 0:  # Damos de baja al cliente
+                        print "DADO DE BAJA cliente " + correo + '\n'
                         del DICC_CLIENT[correo]
                         self.register2file()
-                        print "Borrado " + correo + '\n'
                         self.wfile.write("SIP/2.0 200 OK\r\n\r\n")
-                        
                 else:
                     self.clean_dic()
                     self.wfile.write("SIP/2.0 400 BAD REQUEST\r\n\r\n")
@@ -90,7 +86,7 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
                 break
 
 if __name__ == "__main__":
-    # Creamos servidor de eco y escuchamos
+    # Creamos servidor SIP y escuchamos
     serv = SocketServer.UDPServer(("",  PORT), SIPRegisterHandler)
-    print "Lanzando servidor UDP de eco..."
+    print "Lanzando servidor UDP de SIP...\r\n"
     serv.serve_forever()

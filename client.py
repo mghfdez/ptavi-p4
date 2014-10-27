@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: iso-8859-15 -*-
+#Practica 4 - Miguel Angel Fernandez Sanchez
 """
 Programa cliente que abre un socket a un servidor
 """
@@ -17,7 +18,7 @@ if len(datos_user) != 6:
 SERVER = datos_user[1]    # Dirección IP del servidor.
 PORT = int(datos_user[2])   # Puerto
 METODO = datos_user[3]  # Metodo SIP
-addr = datos_user[4]   # Direccion SIP
+ADDR = datos_user[4]   # Direccion SIP
 EXPIRES = datos_user[5]   # Tiempo de expiración
 VER = "SIP/2.0"   # Version de SIP
 
@@ -28,7 +29,7 @@ else:  # Si el metodo no es conocido o no esta implementado
     raise SystemExit
 
 # Contenido que vamos a enviar
-LINE = metod + " sip:" + addr + " " + VER + "\r\n"
+LINE = metod + " sip:" + ADDR + " " + VER + "\r\n"
 
 # Creamos el socket, lo configuramos y lo atamos a un servidor/puerto
 my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
