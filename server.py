@@ -17,15 +17,17 @@ PORT = int(sys.argv[1])
 DICC_CLIENT = {}
 FILE = 'registered.txt'
 
+
 def clean_dic(dicc):
     """
     Limpia el diccionario de usuarios con plazo expirado
     """
     time_now = time.time()
     for user in DICC_CLIENT.keys():
-        if DICC_CLIENT[user][1] < time_now: 
+        if DICC_CLIENT[user][1] < time_now:
             del DICC_CLIENT[user]
             print "Cliente borrado por plazo expirado"
+
 
 def register2file(fichero, dicc):
     """
@@ -41,13 +43,14 @@ def register2file(fichero, dicc):
         fich.write(texto)
     fich.close()
 
+
 class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
     """
     Echo server class
     """
-    
-    def handle(self):    
-        # Escribe dirección y puerto del cliente (de tupla client_address)        
+
+    def handle(self):
+        # Escribe dirección y puerto del cliente (de tupla client_address)
         while 1:
             cadena = self.rfile.read()
             if cadena != "":
@@ -58,9 +61,9 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
                     exp_time = int(list_words[4])
                     exp_sec = exp_time + time.time()
                     dir_ip = self.client_address[0]
-                    DICC_CLIENT[correo] = [dir_ip, exp_sec]              
+                    DICC_CLIENT[correo] = [dir_ip, exp_sec]
                     register2file(FILE, DICC_CLIENT)
-                    print "Cliente añadido - " + list_words[1]                    
+                    print "Cliente añadido - " + list_words[1]
                     print "Expira en: " + str(exp_time) + " seg."
                     self.wfile.write("SIP/2.0 200 OK\r\n\r\n")
                     if exp_time == 0:
@@ -73,7 +76,7 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
                     self.wfile.write("SIP/2.0 400 BAD REQUEST\r\n\r\n")
             else:
                 break
-     
+
 if __name__ == "__main__":
     # Creamos servidor de eco y escuchamos
     serv = SocketServer.UDPServer(("",  PORT), SIPRegisterHandler)
