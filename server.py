@@ -18,17 +18,6 @@ DICC_CLIENT = {}
 FILE = 'registered.txt'
 
 
-def clean_dic(dicc):
-    """
-    Limpia el diccionario de usuarios con plazo expirado
-    """
-    time_now = time.time()
-    for user in DICC_CLIENT.keys():
-        if DICC_CLIENT[user][1] < time_now:
-            del DICC_CLIENT[user]
-            print "Cliente borrado por plazo expirado"
-
-
 def register2file(fichero, dicc):
     """
     Imprime ordenadamente un diccionario en un fichero
@@ -56,7 +45,11 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
             if cadena != "":
                 list_words = cadena.split()
                 if list_words[0] == 'REGISTER':
-                    clean_dic(DICC_CLIENT)
+                    time_now = time.time()
+                    for user in DICC_CLIENT.keys():  # Limpia el diccionario
+                        if DICC_CLIENT[user][1] < time_now:
+                            del DICC_CLIENT[user]
+                            print "Cliente borrado por plazo expirado"
                     correo = list_words[1]
                     correo = correo.split(":")[1]
                     exp_time = int(list_words[4])
@@ -64,8 +57,8 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
                     dir_ip = self.client_address[0]
                     DICC_CLIENT[correo] = [dir_ip, exp_sec]
                     register2file(FILE, DICC_CLIENT)
-                    print "Cliente añadido - " + list_words[1]
-                    print "Expira en: " + str(exp_time) + " seg."
+                    print "Cliente añadido - " + correo
+                    print "Expira en: " + str(exp_time) + " seg.\r\n"
                     self.wfile.write("SIP/2.0 200 OK\r\n\r\n")
                     if exp_time == 0:
                         del DICC_CLIENT[correo]
@@ -73,7 +66,6 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
                         print "Borrado " + correo + '\n'
                         self.wfile.write("SIP/2.0 200 OK\r\n\r\n")
                 else:
-                    clean_dic(DICC_CLIENT)
                     self.wfile.write("SIP/2.0 400 BAD REQUEST\r\n\r\n")
             else:
                 break
