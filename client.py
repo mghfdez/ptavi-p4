@@ -8,7 +8,6 @@ Programa cliente que abre un socket a un servidor
 import socket
 import sys
 
-# Cliente UDP simple.
 
 datos_user = sys.argv
 if len(datos_user) != 6:
