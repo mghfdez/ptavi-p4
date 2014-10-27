@@ -80,7 +80,7 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
                             del dic_user[line[1][1]]
                             print "Eliminando a: " + line[1][1]
                     else:
-                        # Si Expires != 0 construimos el diccionario y guardamos.
+                        # Si Expires != 0 construimos el diccionario.
                         key = line[1][1]
                         value = [address, line[-1], time.time()]
                         dic_user[key] = value
