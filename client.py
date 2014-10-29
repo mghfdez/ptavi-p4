@@ -9,14 +9,22 @@ import sys
 
 
 # CAMPOS => ip | puerto | register | luke@polismassa.com
+# Por si el usuario ha pasado un numero incorrecto de parámetros
+if len(sys.argv) != 6:
+    print "Usage: client.py ip puerto register sip_address expires_value"
+    raise SystemExit
+
+# Por si el usuario ha introducido un valor no-numérico en "PORT"
 try:
-    SERVER = sys.argv[1]
     PORT = int(sys.argv[2])
-    PETICIONES = sys.argv[3]
-    DIRECCION_SIP = sys.argv[4]
-    EXPIRES = sys.argv[5]
 except IndexError:
     print "Usage: client.py ip puerto register sip_address expires_value"
+
+SERVER = sys.argv[1]
+PETICIONES = sys.argv[3]
+DIRECCION_SIP = sys.argv[4]
+EXPIRES = sys.argv[5]
+
 # Concatenamos un conjunto de dos elementos. Es lo que manda el cliente
 LINE = PETICIONES.upper() + " " + "sip:" + DIRECCION_SIP + " SIP/2.0\r\n"
 LINE = LINE + "Expires: " + EXPIRES + "\r\n\r\n"
