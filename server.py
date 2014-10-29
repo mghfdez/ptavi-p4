@@ -86,6 +86,10 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
                         dic_user[key] = value
                         print "LISTA DE USUARIOS: " + "\n", dic_user
                         print "------------------" + "\n"
+                else:
+                    # Enviamos mensaje de error al cliente
+                    reply = " SIP/2.0 400 Bad Request\r\n\r\n"
+                    self.wfile.write(reply)
                 # Comprobamos que no hay usuarios con Expires = 0.
                 self.delete_expires()
                 # Registramos la entrada en el fichero.
