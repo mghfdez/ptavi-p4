@@ -22,7 +22,6 @@ class SIPRegisterHandler(SocketServer.DatagramRequestHandler):
     """
     Clase Registrar-SIP
     """
-
     def clean_dic(self):
         """
         Limpia el diccionario de usuarios con plazo expirado
